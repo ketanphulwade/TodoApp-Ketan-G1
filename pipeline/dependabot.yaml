@@ -1,0 +1,22 @@
+trigger: none
+
+schedules:
+  - cron: "0 6 * * 1"
+    displayName: Weekly PR Check
+    branches:
+      include:
+        - main
+    always: true
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+  - task: dependabot@2
+    displayName: 'Run Dependabot'
+    inputs:
+      useConfigFile: true
+      configFilePath: '.azuredevops/dependabot.yml'
+      packageManager: 'terraform'
+      directory: '/todoappinfra'
+      targetBranch: 'main'

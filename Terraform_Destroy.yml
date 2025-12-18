@@ -1,0 +1,31 @@
+name: Terraform Destroy
+trigger: none
+
+
+pool: Ketan-Pool
+
+stages:
+  - stage: Terraformdestroy
+    displayName: Terraform Destroy
+    jobs:
+      - job: TerraformInitJob
+        displayName: Terraform Init
+        steps:
+          - task: TerraformTask@5
+            displayName: Terraform Init
+            inputs:
+              provider: 'azurerm'
+              command: 'init'
+              workingDirectory: '$(System.DefaultWorkingDirectory)/todoapp-infra'
+              backendServiceArm: 'ketan-svc-dec'
+              backendAzureRmResourceGroupName: 'rg-ketan'
+              backendAzureRmStorageAccountName: 'strgtfstateketan'
+              backendAzureRmContainerName: 'tfstateketan'
+              backendAzureRmKey: 'ketandevops.terraform.tfstate'
+          - task: TerraformTask@5
+            displayName: Terraform destroy
+            inputs:
+              provider: 'azurerm'
+              command: 'destroy'
+              workingDirectory: '$(System.DefaultWorkingDirectory)/todoapp-infra'
+              environmentServiceNameAzureRM: 'ketan-svc-dec'

@@ -1,0 +1,7 @@
+version: 2
+updates:
+  - package-ecosystem: "terraform"
+    directory: "/todoapp-infra"                # Yaha pe "/" matlab root folder jaha aapka main.tf hai
+    schedule:
+      interval: "daily"           # Roz check karega (change it to weekly if you prefer)
+    open-pull-requests-limit: 5   # Kitne PR ek sath open ho sakte

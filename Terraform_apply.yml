@@ -1,0 +1,60 @@
+name: Terraform Apply
+trigger: none
+
+pool: Ketan-Pool
+
+variables:
+  - group: todoapp-variable  # 🟦 Ensure variable sql_admin_password exists here
+
+stages:
+  - stage: Terraformplan
+    displayName: Terraform Apply
+    jobs:
+      - job: TerraformPlanJob
+        displayName: Terraform Plan
+        steps:
+
+          # ✅ Step 1: Replace Tokens in tfvars and tf files
+          - task: replacetokens@5
+            displayName: 'Replace Tokens in terraform.tfvars'
+            inputs:
+              targetFiles: |
+                **/*.tfvars
+                **/*.tf
+              tokenPrefix: '#{'
+              tokenSuffix: '}#'
+              actionOnMissing: 'fail'
+              writeBOM: true
+              encoding: 'auto'
+              workingDirectory: '$(System.DefaultWorkingDirectory)/todoapp-infra'
+
+          # ✅ Step 2: Terraform Init
+          - task: TerraformTask@5
+            displayName: Terraform Init
+            inputs:
+              provider: 'azurerm'
+              command: 'init'
+              workingDirectory: '$(System.DefaultWorkingDirectory)/todoapp-infra'
+              backendServiceArm: 'ketan-svc-dec'
+              backendAzureRmResourceGroupName: 'ketan-rg'
+              backendAzureRmStorageAccountName: 'strgtfstateketan'
+              backendAzureRmContainerName: 'tfstateketan'
+              backendAzureRmKey: 'ketandevops.terraform.tfstate'
+
+          # ✅ Step 3: Terraform Plan
+          - task: TerraformTask@5
+            displayName: Terraform Plan
+            inputs:
+              provider: 'azurerm'
+              command: 'plan'
+              workingDirectory: '$(System.DefaultWorkingDirectory)/todoapp-infra'
+              environmentServiceNameAzureRM: 'ketan-svc-dec'
+
+          # ✅ Step 4: Terraform Apply
+          - task: TerraformTask@5
+            displayName: Terraform Apply
+            inputs:
+              provider: 'azurerm'
+              command: 'apply'
+              workingDirectory: '$(System.DefaultWorkingDirectory)/todoapp-infra'
+              environmentServiceNameAzureRM: 'ketan-svc-dec'
