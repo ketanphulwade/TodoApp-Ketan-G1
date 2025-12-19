@@ -64,9 +64,7 @@ variable "pip_name" {
 variable "vm" {
 
 }
-variable "vms" {
-
-}
+#variable "vms" {}
 variable vault_name{}
 
 variable "public_ips" {
@@ -75,5 +73,15 @@ variable "public_ips" {
     name = string
   }))
 }
+/*variable "ip_configuration" {
+  description = "Per-VM IP configurations"
+  type = map(list(object({
+    name                          = string
+    subnet_id                     = string
+    private_ip_address_allocation = string
+    public_ip_address_id          = optional(string)
+    primary                       = bool
+  })))
+}*/
 
 

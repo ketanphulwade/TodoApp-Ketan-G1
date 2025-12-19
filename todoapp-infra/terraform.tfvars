@@ -1,10 +1,10 @@
 rg_name           = "rg-todoapp-ketan"
-location          = "Central India"
-vault_name        = "todoapp-ketan-kv1"
-vm_username       = "#{vm_username}#"
-vm_password       = "#{vm_password}#"
-sql_username      = "#{sql_username}#"
-sql_password      = "#{sql_password}#"
+location          = "francecentral"
+vault_name        = "todoapp-ketan-kv7"
+vm_username       = "vmadmin"
+vm_password       = "Rajvee@2019"
+sql_username      = "sqladmin"
+sql_password      = "Rajvee@2019"
 sql_server_name   = "todoapp-sqlserver-ketan"
 sql_database_name = "todoappdb"
 # vnet = {
@@ -58,8 +58,47 @@ vm = {
   }
 }
 
-vms = {
+/*vms = {
   frontend = ""
   backend  = ""
-}
+}*/
 
+security_rules = [
+  {
+    name                       = "allow_ssh"
+    priority                   = 100
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "Tcp"
+    source_port_range          = "*"
+    destination_port_range     = "22"
+    source_address_prefix      = "*"
+    destination_address_prefix = "*"
+  },
+  {
+    name                       = "allow_http"
+    priority                   = 110
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "Tcp"
+    source_port_range          = "*"
+    destination_port_range     = "80"
+    source_address_prefix      = "*"
+    destination_address_prefix = "*"
+}]
+
+/*
+ip_configuration = {
+  frontend = {
+    private_ip_address_allocation = "Dynamic"
+    primary                       = true
+    associate_public_ip           = true
+  }
+
+  backend = {
+    private_ip_address_allocation = "Dynamic"
+    primary                       = true
+    associate_public_ip           = false
+  }
+}
+*/

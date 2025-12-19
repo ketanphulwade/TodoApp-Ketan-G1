@@ -4,14 +4,14 @@ terraform {
       source  = "hashicorp/azurerm"
       version = "~> 4.32.0"
     }
-    }
-      backend "azurerm" {
+  }
+  /*backend "azurerm" {
     resource_group_name  = "ketan-rg"
     storage_account_name = "strgtfstateketan"
     container_name       = "tfstateketan"
     key                  = "ketandevops.terraform.tfstate"
 
-  }
+  }*/
 }
 
 provider "azurerm" {

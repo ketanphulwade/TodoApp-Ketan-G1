@@ -51,7 +51,7 @@ variable "vm" {
 
 }
 
-variable "vms" {}
+#variable "vms" {}
 
 variable "public_ip" {
   description = "Map of public IPs for VMs"
@@ -69,3 +69,29 @@ variable "subnet" {
 # variable "subnet_ids" {
 
 # }
+
+variable "security_rules" {
+  description = "List of NSG security rules"
+  type = list(object({
+    name                       = string
+    priority                   = number
+    direction                  = string
+    access                     = string
+    protocol                   = string
+    source_port_range          = string
+    destination_port_range     = string
+    source_address_prefix      = string
+    destination_address_prefix = string
+  }))
+}
+/*variable "ip_configuration" {
+  description = "Map of IP configurations per VM"
+  type = map(object({
+    name = string
+
+    #subnet_id                     = string
+    private_ip_address_allocation = string
+    #public_ip_address_id = string
+    }
+  ))
+}*/

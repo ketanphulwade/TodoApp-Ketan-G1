@@ -31,18 +31,30 @@ module "subnet" {
   source     = "../modules/azurerm_subnet"
   subnet     = var.subnet
   rg_name    = var.rg_name
+  vnet_name = module.virtual_network.name
 }
 
 
+/*module "nsg" {
+  depends_on     = [module.subnet]
+  source         = "../modules/azurerm_nsg"
+  rg_name        = var.rg_name
+  subnet_name    = var.subnet
+  location       = var.location
+  vm             = var.vm
+  vnet_name      = module.virtual_network.name
+  security_rules = var.security_rules
+}*/
 module "nsg" {
-  depends_on  = [module.subnet]
-  source      = "../modules/azurerm_nsg"
-  rg_name     = var.rg_name
-  subnet_name = var.subnet
-  location    = var.location
-  vms         = var.vms
-  vnet_name   = module.virtual_network.name
+  depends_on     = [module.subnet]
+  source         = "../modules/azurerm_nsg"
+
+  rg_name        = var.rg_name
+  location       = var.location
+  subnet_ids     = module.subnet.subnet_ids   # 🔥 THIS
+  security_rules = var.security_rules
 }
+
 
 module "public_ip" {
   depends_on = [module.subnet]
@@ -53,17 +65,18 @@ module "public_ip" {
 }
 
 module "vm" {
-  depends_on  = [module.subnet, module.public_ip, module.keyvault]
-  source      = "../modules/azure_virtual_machine"
-  vms         = var.vms
-  vm          = var.vm
-  rg_name     = var.rg_name
-  location    = var.location
-  public_ips  = var.public_ip # ✅ Pass entire map instead of one IP
-  subnet_name = var.subnet    # ✅ Pass entire map instead of one subnet
-  vnet_name   = var.vnet_name
-  vault_name   = var.vault_name
- 
+  depends_on = [module.subnet, module.public_ip, module.keyvault]
+  source     = "../modules/azure_virtual_machine"
+  #vms         = var.vms
+  vm               = var.vm
+  rg_name          = var.rg_name
+  location         = var.location
+  public_ips       = var.public_ip # ✅ Pass entire map instead of one IP
+  subnet_name      = var.subnet    # ✅ Pass entire map instead of one subnet
+  vnet_name        = var.vnet_name
+  vault_name       = var.vault_name
+  #ip_configuration = var.ip_configuration
+
 }
 
 module "sql_server" {
@@ -72,8 +85,8 @@ module "sql_server" {
   sql_server_name = var.sql_server_name
   rg_name         = var.rg_name
   location        = var.location
-  sql_username = var.sql_username
-  vault_name   = var.vault_name
+  sql_username    = var.sql_username
+  vault_name      = var.vault_name
 
 }
 
