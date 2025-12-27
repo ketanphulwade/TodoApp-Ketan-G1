@@ -5,13 +5,13 @@ terraform {
       version = "~> 4.32.0"
     }
   }
-  /*backend "azurerm" {
-    resource_group_name  = "ketan-rg"
-    storage_account_name = "strgtfstateketan"
-    container_name       = "tfstateketan"
-    key                  = "ketandevops.terraform.tfstate"
+  backend "azurerm" {
+    # resource_group_name  = "rg-frc-dev-ketan-state-01"
+    # storage_account_name = "strgtfstatedev01"
+    # container_name       = "rg-frc-dev-container-01"
+    # key                  = "dev-todoapp.terraform.tfstate"
 
-  }*/
+  }
 }
 
 provider "azurerm" {

@@ -1,87 +1,66 @@
-variable "pip_id" {
-  description = "ID of the public IP address to associate with the NIC"
-  type        = string
-  default     = null
-
-}
-
-variable "location" {
-  description = "Location for the resources"
-  type        = string
-}
-
-variable "rg_name" {
-  description = "Name of the resource group"
-  type        = string
-}
-
-variable "image_publisher" {
-  description = "Publisher of the OS image"
-  type        = string
-  default     = "Canonical"
-}
-variable "image_offer" {
-  description = "Offer of the OS image"
-  type        = string
-  default     = "0001-com-ubuntu-server-jammy"
 
 
-}
-variable "image_sku" {
-  description = "SKU of the OS image"
-  type        = string
-  default     = "22_04-lts"
+# variable "location" {
+#   description = "Location for the resources"
+#   type        = string
+# }
 
-}
-variable "image_version" {
-  description = "Version of the OS image"
-  type        = string
-  default     = "latest"
+# variable "rg_name" {
+#   description = "Name of the resource group"
+#   type        = string
+# }
 
-
-}
-
-variable "subnet_name" {
-  description = "Name of the subnet"
-
-  default = "default"
-
-}
-variable "vnet_name" {
-  description = "Name of the virtual network"
-  type        = string
-  default     = "todo-vnet"
-
-}
-
-variable "pip_name" {
-  description = "Name of the public IP address"
-  type        = string
-  default     = "todo-pip"
-
-}
-
-variable "vm" {
-
-}
-#variable "vms" {}
-variable vault_name{}
-
-variable "public_ips" {
-  description = "Map of public IPs per VM"
+variable "vms" {
+  description = "Map of VM and NIC configuration"
   type = map(object({
-    name = string
+
+    # =================
+    # VM BASICS
+    # =================
+    vm_name  = string
+    nic_name = string
+    rg_name  = string
+    location = string
+    vm_size  = string
+
+    # =================
+    # NETWORK LOOKUPS
+    # =================
+    vnet_name   = string
+    subnet_name = string
+    pip_name    = string
+    kv_name     = string
+    script_name = optional(string)
+    # =================
+    # VM IMAGE
+    # =================
+    source_image_reference = object({
+      publisher = string
+      offer     = string
+      sku       = string
+      version   = string
+    })
+
+    # =================
+    # NIC OPTIONAL SETTINGS
+    # =================
+    accelerated_networking_enabled = optional(bool, false)
+    ip_forwarding_enabled          = optional(bool, false)
+    dns_servers                    = optional(list(string))
+    internal_dns_name_label        = optional(string)
+    tags                           = optional(map(string))
+
+    # =================
+    # IP CONFIGURATION (OPTIONAL FIELDS)
+    # =================
+    ip_configuration = optional(object({
+      private_ip_address_allocation = string           # Dynamic / Static
+      private_ip_address            = optional(string) # only if Static
+      private_ip_address_version    = optional(string, "IPv4")
+      primary                       = optional(bool, true)
+      }), {
+      private_ip_address_allocation = "Dynamic"
+    })
+
   }))
 }
-/*variable "ip_configuration" {
-  description = "Per-VM IP configurations"
-  type = map(list(object({
-    name                          = string
-    subnet_id                     = string
-    private_ip_address_allocation = string
-    public_ip_address_id          = optional(string)
-    primary                       = bool
-  })))
-}*/
-
-

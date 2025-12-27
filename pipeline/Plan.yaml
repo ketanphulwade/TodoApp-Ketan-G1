@@ -1,0 +1,47 @@
+name : Terraform_Plan_Pipeline
+trigger : none
+
+pool: Ketan-Pool
+  
+#pool : 
+#  vmImage: 'ubuntu-latest'
+
+resources: 
+  repositories: 
+    - repository: DevopsTemplate
+      type: git
+      name: CloudDevops/DevopsTemplate
+      ref: refs/heads/main
+
+parameters:
+- name : enviornment
+  displayName: enviornment
+  type: string
+  default: "tst"
+  values: ["prd","stg","tst"]
+
+variables:
+  - group: common-backend-info
+  - group: todoapp-variable
+
+stages:
+  - stage: TerraformPlan
+    displayName: Terraform Plan
+    jobs:
+      - deployment: TerrformPlan
+        displayName: Terraform Plan 
+        environment: ${{ parameters.enviornment }}
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+              - checkout: self
+              - checkout: DevopsTemplate
+              - template: steps/terraform/plan_new.yaml@DevopsTemplate
+                parameters:
+                  commandOptions: "-var-file=config.${{ parameters.enviornment}}.tfvars"
+                  condition: succeeded()
+                  working_directory: "$(System.DefaultWorkingDirectory)/InfraCode/todoapp-infra"
+                  backend_service_connection: "$(backend_service_connection)"
+
+
